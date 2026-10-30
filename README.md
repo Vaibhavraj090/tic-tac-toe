@@ -1,67 +1,75 @@
-# tic-tac-toe
-# 🎮 Python Tic-Tac-Toe Game
+def print_board(board):
+    """Prints the current state of the game board."""
+    print("\n")
+    print(f" {board[0]} | {board[1]} | {board[2]} ")
+    print("---|---|---")
+    print(f" {board[3]} | {board[4]} | {board[5]} ")
+    print("---|---|---")
+    print(f" {board[6]} | {board[7]} | {board[8]} ")
+    print("\n")
 
-A clean, interactive **Tic-Tac-Toe game built entirely in Python**. This project features a complete implementation of the classic 3x3 grid game, supporting turn-based logic, winner evaluation, tie detection, and user input validation.
+def check_win(board, player):
+    """Checks if the given player has won the game."""
+    win_conditions = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],  # Rows
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],  # Columns
+        [0, 4, 8], [2, 4, 6]              # Diagonals
+    ]
+    for condition in win_conditions:
+        if board[condition[0]] == board[condition[1]] == board[condition[2]] == player:
+            return True
+    return False
 
-## ✨ Features
-* **Interactive Gameplay:** Play the classic 3x3 turn-based match with a friend on a shared device.
-* **Input Validation:** Error-handling prevents players from selecting already occupied spots or entering invalid inputs.
-* **Automatic Win & Tie Detection:** Evaluates horizontal, vertical, and diagonal alignments after every turn.
-<!-- Optional Feature Bullets (Keep what applies to your project) -->
-* **[Optional] Graphical User Interface (GUI):** Built using `Tkinter` / `Pygame` for clean visual rendering and easy mouse-click interactions.
-* **[Optional] Smart AI Opponent:** Play solo against an AI utilizing the Minimax algorithm for an unbeatable challenge.
-* **[Optional] Score Tracker:** Tracks player wins across multiple rounds during the session.
+def check_draw(board):
+    """Checks if the board is completely full (a draw)."""
+    return all(space in ['X', 'O'] for space in board)
 
-## 🛠️ Prerequisites & Installation
+def play_game():
+    """Main function to run the Tic-Tac-Toe game loop."""
+    # Initialize the board with position numbers 1-9
+    board = [str(i) for i in range(1, 10)]
+    current_player = "X"
+    
+    print("Welcome to Tic-Tac-Toe!")
+    print("Players take turns entering a position number (1-9) to place their mark.")
+    
+    while True:
+        print_board(board)
+        
+        # Get input and handle potential errors
+        try:
+            choice = int(input(f"Player {current_player}'s turn. Choose a position (1-9): "))
+        except ValueError:
+            print("Invalid input. Please enter a number between 1 and 9.")
+            continue
+            
+        # Validate entry boundary
+        if choice < 1 or choice > 9:
+            print("Out of range. Please choose a number between 1 and 9.")
+            continue
+            
+        # Check if the space is already taken
+        index = choice - 1
+        if board[index] in ['X', 'O']:
+            print("That position is already taken! Try a different spot.")
+            continue
+            
+        # Place the mark
+        board[index] = current_player
+        
+        # Check game status
+        if check_win(board, current_player):
+            print_board(board)
+            print(f"Congratulations! Player {current_player} wins! 🎉")
+            break
+            
+        if check_draw(board):
+            print_board(board)
+            print("It's a draw! Well played. 🤝")
+            break
+            
+        # Swap players
+        current_player = "O" if current_player == "X" else "X"
 
-### Option A: Command Line / Tkinter (Standard Library)
-No external libraries are required if your game relies entirely on Python's built-in modules (`Tkinter` or console output). 
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com
-   cd YOUR-REPO-NAME
-   ```
-
-2. **Run the game:**
-   ```bash
-   python main.py
-   ```
-
-### Option B: Pygame Version
-If you built the game using **Pygame**:
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com
-   cd YOUR-REPO-NAME
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   pip install pygame
-   ```
-
-3. **Run the game:**
-   ```bash
-   python main.py
-   ```
-
-## 🎮 How to Play
-1. **Player X** always takes the first turn.
-2. Choose your grid position:
-   * *For CLI:* Input the corresponding number (1-9) or coordinate for the spot you want to claim.
-   * *For GUI:* Click directly on the grid square where you want to place your token.
-3. The game will automatically detect if a player achieves 3 in a row or if the board runs out of spaces, ending in a draw.
-4. Follow the prompt on the screen to reset the board and play again!
-
-## 📂 Project Structure
-```text
-├── main.py          # The entry point of the game application
-├── game_logic.py    # Game mechanics, turn counters, and win-checks (if separated)
-├── README.md        # Project documentation
-└── assets/          # (Optional) Images, sounds, or style templates
-```
-
-## 📜 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+if __name__ == "__main__":
+    play_game()
